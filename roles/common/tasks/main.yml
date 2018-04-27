@@ -1,0 +1,69 @@
+---
+- name: Set timezone to Europe/Brussels
+  timezone:
+    name: Europe/Brussels
+
+- name: Add EPEL repository
+  yum_repository:
+    name: EPEL
+    description: EPEL repo
+    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+    gpgkey: https://archive.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+
+- name: Upgrade all packages
+  yum:
+    name: "*"
+    state: latest
+
+- name: Install base packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - git
+    - sudo
+    - tcpdump
+    - curl
+    - wget
+    - vim
+    - ntp
+    - lsof
+    - info
+    - logrotate
+    - rsyslog
+    - coreutils
+    - findutils
+    - gzip
+    - hostname
+    - iproute
+    - sed
+    - tar
+    - bind-utils
+    - chrony
+    - htop
+    - iotop
+
+- name: Template /etc/chrony.conf
+  template:
+    src: etc/chrony.conf
+    dest: /etc/chrony.conf
+    owner: root
+    owner: root
+    mode: 0644
+  notify:
+    - Restart chronyd
+
+- name: Add ntp to firewalld
+  firewalld:
+    service: ntp
+    immediate: true
+    permanent: true
+    state: enabled
+
+- name: Create the authorized_keys file
+  template:
+    src: root/ssh/authorized_keys
+    dest: /root/.ssh/authorized_keys
+    owner: root
+    group: root
+    mode: 0600
