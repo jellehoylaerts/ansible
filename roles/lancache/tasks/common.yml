@@ -62,7 +62,7 @@
   file:
     path: "/srv/lancache/{{ item }}"
     state: directory
-    mode: 0664
+    mode: 0777
     owner: lancache
     group: lancache
   with_items:

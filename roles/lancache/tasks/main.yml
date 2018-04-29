@@ -2,3 +2,4 @@
 - include: common.yml
 - include: nginx.yml
 - include: sniproxy.yml
+- include: lancache.yml

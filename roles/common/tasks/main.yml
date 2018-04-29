@@ -21,6 +21,7 @@
     state: latest
   with_items:
     - git
+    - rsync
     - sudo
     - tcpdump
     - curl
@@ -85,3 +86,6 @@
     path: /etc/security/limits.conf
     regexp: '\*\s+hard\s+nofile'
     line: '* hard nofile 65536'
+
+- name: Enable tuned throughput-performance profile
+  shell: "tuned-adm profile throughput-performance"

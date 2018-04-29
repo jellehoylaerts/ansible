@@ -1,0 +1,37 @@
+---
+- name: Install netdata dependancies
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - autoconf
+    - automake
+    - curl
+    - gcc
+    - git
+    - libmnl-devel
+    - libuuid-devel
+    - lm_sensors
+    - make
+    - MySQL-python
+    - nc
+    - pkgconfig
+    - python
+    - python-psycopg2
+    - PyYAML
+    - zlib-devel
+
+- name: Get netdata's code
+  git:
+    repo: https://github.com/firehol/netdata.git
+    dest: /root/netdata
+    force: true
+
+- name: Install netdata
+  shell: "cd /root/netdata && ./netdata-installer.sh --dont-wait --auto-update"
+
+- name: Schedule auto-updates of netdata
+  cron:
+    name: "Auto-updates of Netdata"
+    special_time: daily
+    job: /root/netdata/netdata-updater.sh
