@@ -25,10 +25,22 @@
 - name: Run make install for Sniproxy
   shell: "cd ~/sniproxy && make install"
 
-- name: Start Sniproxy
-  shell: "/usr/local/sbin/sniproxy -c /etc/sniproxy.conf"
+- name: Copy the systemd service file
+  copy:
+    src: sniproxy.service
+    dest: /etc/systemd/system/sniproxy.service
+    owner: root
+    group: root
+    mode: 0664
 
-- cron:
-    name: "Start Sniproxy"
-    special_time: reboot
-    job: "/usr/local/sbin/sniproxy -c /etc/sniproxy.conf"
+- name: Enable sniproxy.service
+  systemd:
+    name: sniproxy
+    enabled: true
+
+- name: Open firewalld port
+  firewalld:
+    service: https
+    permanent: true
+    immediate: true
+    state: enabled

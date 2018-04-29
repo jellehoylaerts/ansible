@@ -21,24 +21,6 @@
     group: root
     recurse: true
 
-- name: Copy init files
-  copy:
-    src: "{{ lc_base_folder }}/init.d/{{ item }}"
-    dest: "/etc/init.d/{{ item }}"
-    remote_src: yes
-    mode: 0774
-  with_items:
-    - nginx
-    - sniproxy
-
-- name: Enable init files
-  systemd:
-    name: "{{ item }}"
-    enabled: true
-  with_items:
-    - nginx
-    - sniproxy
-
 - name: Replace variables in hosts file
   replace:
     path: "{{ lc_base_folder }}/hosts"

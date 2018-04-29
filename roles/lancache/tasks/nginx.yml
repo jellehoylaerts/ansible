@@ -34,3 +34,23 @@
 
 - name: Run make install for Nginx
   shell: "cd ~/{{ nginx_version }} && make install"
+
+- name: Copy systemd service file
+  copy:
+    src: nginx.service
+    dest: /etc/systemd/system/nginx.service
+    owner: root
+    group: root
+    mode: 0664
+
+- name: Enable nginx service
+  systemd:
+    name: nginx
+    enabled: true
+
+- name: Open firewalld port
+  firewalld:
+    service: http
+    permanent: true
+    immediate: true
+    state: enabled

@@ -1,0 +1,11 @@
+[Unit]
+Description=The sniproxy HTTPS proxy server
+After=syslog.target network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/local/sbin/sniproxy -c /etc/sniproxy.conf
+ExecStop=/bin/kill -s QUIT $MAINPID
+
+[Install]
+WantedBy=multi-user.target

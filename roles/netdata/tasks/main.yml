@@ -35,3 +35,10 @@
     name: "Auto-updates of Netdata"
     special_time: daily
     job: /root/netdata/netdata-updater.sh
+
+- name: Open firewalld port
+  firewalld:
+    port: 19999/tcp
+    permanent: true
+    immediate: true
+    state: enabled

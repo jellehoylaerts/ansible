@@ -3,6 +3,8 @@ nginx_version: nginx-1.14.0
 lc_base_folder: /usr/local/lancache
 lc_nginx_loc: /usr/local/nginx
 
+main_interface: enp0s3
+ip_gw: 172.16.0.1
 lc_ip: 172.16.0.181
 lc_ip_steam: 172.16.0.182
 lc_ip_riot: 172.16.0.183
