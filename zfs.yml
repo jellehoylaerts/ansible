@@ -1,0 +1,6 @@
+---
+- name: Configure ZFS
+  hosts: lancache
+
+  roles:
+    - zfs

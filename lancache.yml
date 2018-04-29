@@ -1,0 +1,6 @@
+---
+- name: Configure LANcache
+  hosts: lancache
+
+  roles:
+    - common

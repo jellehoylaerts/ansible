@@ -42,12 +42,18 @@
     - chrony
     - htop
     - iotop
+    - iftop
+    - nload
+    - net-tools
+    - iperf
+    - strace
+    - tuned
+    - firewalld
 
 - name: Template /etc/chrony.conf
   template:
     src: etc/chrony.conf
     dest: /etc/chrony.conf
-    owner: root
     owner: root
     mode: 0644
   notify:
@@ -67,3 +73,15 @@
     owner: root
     group: root
     mode: 0600
+
+- name: Edit soft limits
+  lineinfile:
+    path: /etc/security/limits.conf
+    regexp: '\*\s+soft\s+nofile'
+    line: '* soft nofile 65536'
+
+- name: Edit hard limits
+  lineinfile:
+    path: /etc/security/limits.conf
+    regexp: '\*\s+hard\s+nofile'
+    line: '* hard nofile 65536'

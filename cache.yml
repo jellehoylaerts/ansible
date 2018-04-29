@@ -1,0 +1,6 @@
+---
+- name: Install the LANcache
+  hosts: lancache
+
+  roles:
+    - lancache

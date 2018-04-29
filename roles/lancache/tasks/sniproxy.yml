@@ -1,0 +1,34 @@
+---
+- name: Clone Sniproxy from GIT
+  git:
+    repo: https://github.com/dlundquist/sniproxy
+    dest: ~/sniproxy/
+    force: true
+
+- name: Get config file for Sniproxy
+  get_url:
+    url: https://raw.githubusercontent.com/OpenSourceLAN/origin-docker/master/sniproxy/sniproxy.conf
+    dest: /etc/sniproxy.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Run ./autogen.sh for Sniproxy
+  shell: "cd ~/sniproxy && ./autogen.sh"
+
+- name: Run ./configure for Sniproxy
+  shell: "cd ~/sniproxy && ./configure"
+
+- name: Run make for Sniproxy
+  shell: "cd ~/sniproxy && make"
+
+- name: Run make install for Sniproxy
+  shell: "cd ~/sniproxy && make install"
+
+- name: Start Sniproxy
+  shell: "/usr/local/sbin/sniproxy -c /etc/sniproxy.conf"
+
+- cron:
+    name: "Start Sniproxy"
+    special_time: reboot
+    job: "/usr/local/sbin/sniproxy -c /etc/sniproxy.conf"

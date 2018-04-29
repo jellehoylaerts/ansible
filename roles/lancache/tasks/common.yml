@@ -1,0 +1,89 @@
+---
+- name: Install all necessary packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - "@Development tools"
+    - curl
+    - git
+    - httpry
+    - devscripts
+    - automake
+    - libtool
+    - autoconf
+    - cdbs
+    - debhelper
+    - dh-autoreconf
+    - dpkg-dev
+    - gettext
+    - fakeroot
+    - pcre
+    - pcre-devel
+    - zlib
+    - zlib-devel
+    - readline
+    - readline-devel
+    - ncurses
+    - ncurses-devel
+    - openssl
+    - openssl-devel
+    - udns
+    - udns-devel
+    - libev
+    - libev-devel
+    - pkgconfig
+    - gd
+    - gd-devel
+    - geoip
+    - geoip-devel
+    - jemalloc
+
+- name: Disable IPv6 with sysctl
+  sysctl:
+    name: "{{ item }}"
+    value: 1
+    state: present
+  with_items:
+    - net.ipv6.conf.all.disable_ipv6
+    - net.ipv6.conf.default.disable_ipv6
+    - net.ipv6.conf.lo.disable_ipv6
+
+- name: Create lancache group
+  group:
+    name: lancache
+
+- name: Create lancache user
+  user:
+    name: lancache
+    group: lancache
+
+- name: Create all necessary directories
+  file:
+    path: "/srv/lancache/{{ item }}"
+    state: directory
+    mode: 0664
+    owner: lancache
+    group: lancache
+  with_items:
+    - logs/Errors
+    - logs/Keys
+    - logs/Access
+    - data/apple
+    - data/microsoft
+    - data/installs
+    - data/other
+    - data/tmp
+    - data/hirez
+    - data/origin
+    - data/riot
+    - data/gog
+    - data/sony
+    - data/steam
+    - data/wargaming
+    - data/arenanetworks
+    - data/uplay
+    - data/glyph
+    - data/zenimax
+    - data/digitalextremes
+    - data/pearlabyss
