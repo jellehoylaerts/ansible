@@ -89,5 +89,40 @@
     regexp: '\*\s+hard\s+nofile'
     line: '* hard nofile 65536'
 
+- name: Increase queue listen size permanently
+  lineinfile:
+    dest: /etc/sysctl.conf
+    regexp: '^net\.core\.somaxconn'
+    line: "net.core.somaxconn={{ system.somaxconn }}"
+  register: sys_somaxconn
+
+- name: Increase queue listen size now
+  command: sysctl -w net.core.somaxconn={{ system.somaxconn }}
+  when: sys_somaxconn.changed
+
+- name: Find max open files
+  command: cat /proc/sys/fs/file-max
+  register: file_max
+
+- name: Increase max files in sysctl
+  lineinfile:
+    dest: /etc/sysctl.conf
+    regexp: '^fs\.file-max'
+    line: "fs.file-max={{ file_max.stdout }}"
+  register: sys_filemax
+
+- name: Increase max files now
+  command: sysctl -w fs.file-max={{ file_max.stdout }}
+  when: sys_filemax.changed
+
+- name: Set systemd default limit
+  lineinfile:
+    dest: "/etc/systemd/{{ item }}"
+    regexp: '^#?DefaultLimitNOFILE'
+    line: "DefaultLimitNOFILE=infinity"
+  with_items:
+    - user.conf
+    - system.conf
+
 - name: Enable tuned throughput-performance profile
   shell: "tuned-adm profile throughput-performance"
