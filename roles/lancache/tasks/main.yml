@@ -1,6 +1,6 @@
 ---
 - include: network.yml
-- include: common.yml
+- include: base.yml
 - include: nginx.yml
 - include: sniproxy.yml
 - include: lancache.yml

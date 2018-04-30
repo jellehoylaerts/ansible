@@ -37,7 +37,6 @@
     - gd-devel
     - geoip
     - geoip-devel
-    - jemalloc
 
 - name: Disable IPv6 with sysctl
   sysctl:
@@ -87,3 +86,46 @@
     - data/zenimax
     - data/digitalextremes
     - data/pearlabyss
+
+- name: Increase queue listen size permanently
+  lineinfile:
+    dest: /etc/sysctl.conf
+    regexp: '^net\.core\.somaxconn'
+    line: "net.core.somaxconn={{ somaxconn }}"
+  register: sys_somaxconn
+
+- name: Increase queue listen size now
+  command: sysctl -w net.core.somaxconn={{ somaxconn }}
+  when: sys_somaxconn.changed
+
+- name: Find max open files
+  command: cat /proc/sys/fs/file-max
+  register: file_max
+
+- name: Increase max files in sysctl
+  lineinfile:
+    dest: /etc/sysctl.conf
+    regexp: '^fs\.file-max'
+    line: "fs.file-max={{ file_max.stdout }}"
+  register: sys_filemax
+
+- name: Increase max files now
+  command: sysctl -w fs.file-max={{ file_max.stdout }}
+  when: sys_filemax.changed
+
+- name: Set systemd default limit
+  lineinfile:
+    dest: "/etc/systemd/{{ item }}"
+    regexp: '^#?DefaultLimitNOFILE'
+    line: "DefaultLimitNOFILE=infinity"
+  with_items:
+    - user.conf
+    - system.conf
+
+- name: Increase security limits
+  template:
+    src: "lancache_limits.conf"
+    dest: "/etc/security/limits.d/lancache_limits.conf"
+    owner: root
+    group: root
+    mode: 0644

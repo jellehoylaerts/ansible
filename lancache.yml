@@ -3,6 +3,6 @@
   hosts: lancache
 
   roles:
-    - common
+    - base
     - lancache
     - netdata
