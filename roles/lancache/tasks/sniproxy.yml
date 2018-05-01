@@ -2,7 +2,7 @@
 - name: Clone Sniproxy from GIT
   git:
     repo: https://github.com/dlundquist/sniproxy
-    dest: ~/sniproxy/
+    dest: /tmp/sniproxy/
     force: true
 
 - name: Get config file for Sniproxy
@@ -14,16 +14,24 @@
     mode: 0644
 
 - name: Run ./autogen.sh for Sniproxy
-  shell: "cd ~/sniproxy && ./autogen.sh"
+  shell: "./autogen.sh"
+  args:
+    chdir: "/tmp/sniproxy"
 
 - name: Run ./configure for Sniproxy
-  shell: "cd ~/sniproxy && ./configure"
+  shell: "./configure  --sbindir=/usr/sbin"
+  args:
+    chdir: "/tmp/sniproxy"
 
 - name: Run make for Sniproxy
-  shell: "cd ~/sniproxy && make"
+  shell: "make"
+  args:
+    chdir: "/tmp/sniproxy"
 
 - name: Run make install for Sniproxy
-  shell: "cd ~/sniproxy && make install"
+  shell: "make install"
+  args:
+    chdir: "/tmp/sniproxy"
 
 - name: Copy the systemd service file
   copy:

@@ -5,23 +5,7 @@
     dest: "{{ lc_base_folder }}"
     force: true
 
-- name: Create directories for LANcache
-  file:
-    path: "{{ lc_base_folder }}/{{ item}}"
-    state: directory
-  with_items:
-    - config
-    - data
-    - logs
-
-- name: Change ownership of LANcache directory
-  file:
-    path: "{{ lc_base_folder }}"
-    owner: root
-    group: root
-    recurse: true
-
-- name: Replace variables in hosts file
+- name: Replace aliases by ip  
   replace:
     path: "{{ lc_base_folder }}/hosts"
     regexp: "{{ item.search }}"
@@ -49,6 +33,7 @@
 
 - name: Copy hosts file to /etc/hosts
   copy:
+
     src: "{{ lc_base_folder }}/hosts"
     dest: /etc/hosts
     remote_src: true
@@ -57,11 +42,16 @@
     mode: 0644
 
 - name: Copy LANcache configuration
-  command: "cp -rf {{ lc_base_folder }}/conf/ /usr/local/nginx/"
+  command: "cp -rf {{ lc_base_folder }}/conf/ /etc/nginx/"
+
+- name: Copy Nginx config file
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
 
 - name: Replace variables in vhost files
   replace:
-    path: "{{ lc_nginx_loc }}/conf/vhosts-enabled/lancache-{{ item }}.conf"
+    path: "/etc/nginx/conf/vhosts-enabled/lancache-{{ item }}.conf"
     regexp: lc-host-proxybind
     replace: "{{ lc_ip }}"
   loop:
@@ -82,3 +72,13 @@
     - uplay
     - wargaming
     - zenimax
+
+- name: Change ownership of directorties
+  file:
+    path: "{{ item }}"
+    owner: lancache
+    group: lancache
+    recurse: true
+  with_items:
+    - /srv/
+    - /etc/nginx/
