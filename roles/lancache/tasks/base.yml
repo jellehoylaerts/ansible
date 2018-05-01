@@ -68,6 +68,7 @@
     - logs/Errors
     - logs/Keys
     - logs/Access
+    - logs/nginx
     - data/apple
     - data/microsoft
     - data/installs
@@ -86,6 +87,30 @@
     - data/zenimax
     - data/digitalextremes
     - data/pearlabyss
+
+- name: Create nginx directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - /etc/nginx
+    - /etc/nginx/sites-enabled
+    - /etc/nginx/conf.d
+
+- name: Create symlink for LANcache logs
+  file:
+    src: /srv/lancache/logs
+    dest: /var/log/lancache
+    state: link
+
+- name: Create symlink for Nginx logs
+  file:
+    src: /srv/lancache/logs/nginx
+    dest: /var/log/nginx
+    state: link
 
 - name: Increase queue listen size permanently
   lineinfile:

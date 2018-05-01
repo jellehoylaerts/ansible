@@ -1,5 +1,5 @@
 ---
-- name: Common playbook
+- name: Base playbook
   hosts: all
 
   roles:
