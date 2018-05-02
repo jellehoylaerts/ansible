@@ -1,4 +1,42 @@
 ---
+- name: Create all necessary directories
+  file:
+    path: "/srv/lancache/{{ item }}"
+    state: directory
+    mode: 0777
+    owner: lancache
+    group: lancache
+  with_items:
+    - logs/Errors
+    - logs/Keys
+    - logs/Access
+    - data/apple
+    - data/microsoft
+    - data/installs
+    - data/other
+    - data/tmp
+    - data/hirez
+    - data/origin
+    - data/riot
+    - data/gog
+    - data/sony
+    - data/steam
+    - data/wargaming
+    - data/arenanetworks
+    - data/uplay
+    - data/glyph
+    - data/zenimax
+    - data/digitalextremes
+    - data/pearlabyss
+    - data/blizzard
+    - data/enmasse
+
+- name: Create symlink for LANcache logs
+  file:
+    src: /srv/lancache/logs
+    dest: /var/log/lancache
+    state: link
+
 - name: Clone git LANcache project
   git:
     repo: http://github.com/bntjah/lancache
@@ -33,7 +71,6 @@
 
 - name: Copy hosts file to /etc/hosts
   copy:
-
     src: "{{ lc_base_folder }}/hosts"
     dest: /etc/hosts
     remote_src: true
@@ -42,16 +79,19 @@
     mode: 0644
 
 - name: Copy LANcache configuration
-  command: "cp -rf {{ lc_base_folder }}/conf/ /etc/nginx/"
+  command: "cp -rf {{ lc_base_folder }}/conf/lancache /etc/nginx/"
+
+- name: Copy LANcache vhosts
+  command: "cp -rf {{ lc_base_folder }}/conf/vhosts-enabled /etc/nginx/"
 
 - name: Copy Nginx config file
-  copy:
+  template:
     src: nginx.conf
     dest: /etc/nginx/nginx.conf
 
 - name: Replace variables in vhost files
   replace:
-    path: "/etc/nginx/conf/vhosts-enabled/lancache-{{ item }}.conf"
+    path: "/etc/nginx/vhosts-enabled/lancache-{{ item }}.conf"
     regexp: lc-host-proxybind
     replace: "{{ lc_ip }}"
   loop:

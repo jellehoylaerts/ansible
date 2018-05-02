@@ -1,0 +1,23 @@
+---
+- name: Create vg for the LANcache
+  lvg:
+    vg: lancache
+    pvs: /dev/sdb,/dev/sdc
+
+- name: Create lv for the LANcache
+  lvol:
+    vg: lancache
+    lv: lv-srv-lancache
+    size: 100%FREE
+
+- name: Create new filesystem on lv
+  filesystem:
+    fstype: xfs
+    dev: /dev/lancache/lv-srv-lancache
+
+- name: Mounting new filesystem
+  mount:
+    name: /srv/lancache
+    src: /dev/lancache/lv-srv-lancache
+    fstype: xfs
+    state: mounted

@@ -1,6 +1,7 @@
 ---
-#- include: network.yml
-- include: base.yml
+- include: network.yml
+- include: filesystem.yml
+- include: preconfig.yml
 - include: nginx.yml
 - include: sniproxy.yml
 - include: lancache.yml

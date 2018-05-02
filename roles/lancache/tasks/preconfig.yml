@@ -7,6 +7,8 @@
     - "@Development tools"
     - curl
     - git
+    - sg3_utils
+    - system-storage-manager
     - httpry
     - devscripts
     - automake
@@ -56,61 +58,6 @@
   user:
     name: lancache
     group: lancache
-
-- name: Create all necessary directories
-  file:
-    path: "/srv/lancache/{{ item }}"
-    state: directory
-    mode: 0777
-    owner: lancache
-    group: lancache
-  with_items:
-    - logs/Errors
-    - logs/Keys
-    - logs/Access
-    - logs/nginx
-    - data/apple
-    - data/microsoft
-    - data/installs
-    - data/other
-    - data/tmp
-    - data/hirez
-    - data/origin
-    - data/riot
-    - data/gog
-    - data/sony
-    - data/steam
-    - data/wargaming
-    - data/arenanetworks
-    - data/uplay
-    - data/glyph
-    - data/zenimax
-    - data/digitalextremes
-    - data/pearlabyss
-
-- name: Create nginx directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-  with_items:
-    - /etc/nginx
-    - /etc/nginx/sites-enabled
-    - /etc/nginx/conf.d
-
-- name: Create symlink for LANcache logs
-  file:
-    src: /srv/lancache/logs
-    dest: /var/log/lancache
-    state: link
-
-- name: Create symlink for Nginx logs
-  file:
-    src: /srv/lancache/logs/nginx
-    dest: /var/log/nginx
-    state: link
 
 - name: Increase queue listen size permanently
   lineinfile:

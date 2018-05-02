@@ -1,0 +1,6 @@
+---
+- name: LANcache autofiller
+  hosts: lancache
+
+  roles:
+    - ius

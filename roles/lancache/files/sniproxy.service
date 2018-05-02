@@ -4,7 +4,7 @@ After=syslog.target network.target
 
 [Service]
 Type=forking
-ExecStart=/usr/local/sniproxy -c /etc/sniproxy.conf
+ExecStart=/usr/sbin/sniproxy -c /etc/sniproxy.conf
 ExecStop=/bin/kill -s QUIT $MAINPID
 
 [Install]
