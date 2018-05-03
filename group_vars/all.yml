@@ -4,6 +4,7 @@ cache_purge_version: 2.3
 
 somaxconn: 16384
 
+lc_devices: /dev/sdb,/dev/sdc
 lc_base_folder: /tmp/lancache
 
 main_interface: enp0s3
