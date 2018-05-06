@@ -3,7 +3,7 @@
   hosts: lancache
 
   roles:
-#    - base
-#    - lancache
-#    - netdata
+    - base
+    - lancache
+    - netdata
     - lancache-unbound
