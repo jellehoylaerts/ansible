@@ -63,11 +63,11 @@
   lineinfile:
     dest: /etc/sysctl.conf
     regexp: '^net\.core\.somaxconn'
-    line: "net.core.somaxconn={{ somaxconn }}"
+    line: "net.core.somaxconn={{ lc.somaxconn }}"
   register: sys_somaxconn
 
 - name: Increase queue listen size now
-  command: sysctl -w net.core.somaxconn={{ somaxconn }}
+  command: sysctl -w net.core.somaxconn={{ lc.somaxconn }}
   when: sys_somaxconn.changed
 
 - name: Find max open files

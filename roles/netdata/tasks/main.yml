@@ -28,7 +28,9 @@
     force: true
 
 - name: Install netdata
-  shell: "cd /root/netdata && ./netdata-installer.sh --dont-wait --auto-update"
+  shell: "./netdata-installer.sh --dont-wait --auto-update"
+  args:
+    chdir: /root/netdata
 
 - name: Schedule auto-updates of netdata
   cron:

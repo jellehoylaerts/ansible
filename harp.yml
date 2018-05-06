@@ -1,0 +1,16 @@
+---
+- name: Configure HAProxy to Reverse Proxy
+  hosts: harp1
+  
+  roles:
+#    - base
+#    - ius
+    - { role: haproxy-reverse-proxy, keepalived_role: "MASTER" }
+
+- name: Configure HAProxy to Reverse Proxy
+  hosts: harp2
+  
+  roles:
+#    - base
+#    - ius
+    - { role: haproxy-reverse-proxy, keepalived_role: "BACKUP" }

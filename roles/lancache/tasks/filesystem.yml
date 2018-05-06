@@ -2,13 +2,14 @@
 - name: Create vg for the LANcache
   lvg:
     vg: lancache
-    pvs: "{{ lc_devices }}"
+    pvs: "{{ lc.devices }}"
 
 - name: Create lv for the LANcache
   lvol:
     vg: lancache
     lv: lv-srv-lancache
     size: 100%FREE
+  ignore_errors: true
 
 - name: Create new filesystem on lv
   filesystem:

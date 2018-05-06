@@ -40,38 +40,38 @@
 - name: Clone git LANcache project
   git:
     repo: http://github.com/bntjah/lancache
-    dest: "{{ lc_base_folder }}"
+    dest: "{{ lc.base_folder }}"
     force: true
 
 - name: Replace aliases by ip  
   replace:
-    path: "{{ lc_base_folder }}/hosts"
+    path: "{{ lc.base_folder }}/hosts"
     regexp: "{{ item.search }}"
     replace: "{{ item.replace }}"
   loop:
     - { search: 'lc-hostname', replace: '{{ inventory_hostname }}' }
-    - { search: 'lc-host-proxybind', replace: '{{ lc_ip }}' }
-    - { search: 'lc-host-arena', replace: '{{ lc_ip_arena }}' }
-    - { search: 'lc-host-apple', replace: '{{ lc_ip_apple }}' }
-    - { search: 'lc-host-blizzard', replace: '{{ lc_ip_blizzard }}' }
-    - { search: 'lc-host-hirez', replace: '{{ lc_ip_hirez }}' }
-    - { search: 'lc-host-glyph', replace: '{{ lc_ip_glyph }}' }
-    - { search: 'lc-host-gog', replace: '{{ lc_ip_gog }}' }
-    - { search: 'lc-host-microsoft', replace: '{{ lc_ip_microsoft }}' }
-    - { search: 'lc-host-origin', replace: '{{ lc_ip_origin }}' }
-    - { search: 'lc-host-riot', replace: '{{ lc_ip_riot }}' }
-    - { search: 'lc-host-steam', replace: '{{ lc_ip_steam }}' }
-    - { search: 'lc-host-sony', replace: '{{ lc_ip_sony }}' }
-    - { search: 'lc-host-enmasse', replace: '{{ lc_ip_enmasse }}' }
-    - { search: 'lc-host-uplay', replace: '{{ lc_ip_uplay }}' }
-    - { search: 'lc-host-wargaming', replace: '{{ lc_ip_wargaming }}' }
-    - { search: 'lc-host-zenimax', replace: '{{ lc_ip_zenimax }}' }
-    - { search: 'lc-host-digitalextremes', replace: '{{ lc_ip_digitalextremes }}' }
-    - { search: 'lc-host-pearlabyss', replace: '{{ lc_ip_pearlabyss }}' }
+    - { search: 'lc-host-proxybind', replace: '{{ lc.ip }}' }
+    - { search: 'lc-host-arena', replace: '{{ lc.ip_arena }}' }
+    - { search: 'lc-host-apple', replace: '{{ lc.ip_apple }}' }
+    - { search: 'lc-host-blizzard', replace: '{{ lc.ip_blizzard }}' }
+    - { search: 'lc-host-hirez', replace: '{{ lc.ip_hirez }}' }
+    - { search: 'lc-host-glyph', replace: '{{ lc.ip_glyph }}' }
+    - { search: 'lc-host-gog', replace: '{{ lc.ip_gog }}' }
+    - { search: 'lc-host-microsoft', replace: '{{ lc.ip_microsoft }}' }
+    - { search: 'lc-host-origin', replace: '{{ lc.ip_origin }}' }
+    - { search: 'lc-host-riot', replace: '{{ lc.ip_riot }}' }
+    - { search: 'lc-host-steam', replace: '{{ lc.ip_steam }}' }
+    - { search: 'lc-host-sony', replace: '{{ lc.ip_sony }}' }
+    - { search: 'lc-host-enmasse', replace: '{{ lc.ip_enmasse }}' }
+    - { search: 'lc-host-uplay', replace: '{{ lc.ip_uplay }}' }
+    - { search: 'lc-host-wargaming', replace: '{{ lc.ip_wargaming }}' }
+    - { search: 'lc-host-zenimax', replace: '{{ lc.ip_zenimax }}' }
+    - { search: 'lc-host-digitalextremes', replace: '{{ lc.ip_digitalextremes }}' }
+    - { search: 'lc-host-pearlabyss', replace: '{{ lc.ip_pearlabyss }}' }
 
 - name: Copy hosts file to /etc/hosts
   copy:
-    src: "{{ lc_base_folder }}/hosts"
+    src: "{{ lc.base_folder }}/hosts"
     dest: /etc/hosts
     remote_src: true
     owner: root
@@ -79,10 +79,10 @@
     mode: 0644
 
 - name: Copy LANcache configuration
-  command: "cp -rf {{ lc_base_folder }}/conf/lancache /etc/nginx/"
+  command: "cp -rf {{ lc.base_folder }}/conf/lancache /etc/nginx/"
 
 - name: Copy LANcache vhosts
-  command: "cp -rf {{ lc_base_folder }}/conf/vhosts-enabled /etc/nginx/"
+  command: "cp -rf {{ lc.base_folder }}/conf/vhosts-enabled /etc/nginx/"
 
 - name: Copy Nginx config file
   template:
@@ -93,7 +93,7 @@
   replace:
     path: "/etc/nginx/vhosts-enabled/lancache-{{ item }}.conf"
     regexp: lc-host-proxybind
-    replace: "{{ lc_ip }}"
+    replace: "{{ lc.ip }}"
   loop:
     - apple
     - arenanetworks
@@ -122,3 +122,5 @@
   with_items:
     - /srv/
     - /etc/nginx/
+  notify:
+    - Restart nginx

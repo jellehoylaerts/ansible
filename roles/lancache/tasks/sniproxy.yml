@@ -40,6 +40,8 @@
     owner: root
     group: root
     mode: 0664
+  notify:
+    - Restart sniproxy
 
 - name: Enable sniproxy.service
   systemd:

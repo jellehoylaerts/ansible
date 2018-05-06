@@ -3,13 +3,6 @@
   timezone:
     name: Europe/Brussels
 
-#- name: Add EPEL repository
-#  yum_repository:
-#    name: EPEL
-#    description: EPEL repo
-#    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
-#    gpgkey: https://archive.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
-
 - name: Add EPEL repository
   yum:
     name: epel-release
@@ -26,6 +19,7 @@
     state: latest
   with_items:
     - yum-utils
+    - psmisc
     - git
     - rsync
     - sudo

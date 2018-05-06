@@ -19,7 +19,7 @@
 
 - name: Get Nginx and unarchive
   unarchive:
-    src: "http://nginx.org/download/{{ nginx_version }}.tar.gz"
+    src: "http://nginx.org/download/{{ lc.nginx_version }}.tar.gz"
     dest: /tmp/
     remote_src: yes
   register: nginx
@@ -27,48 +27,48 @@
 - name: Get Nginx cache purge
   unarchive:
     src: http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz
-    dest: "/tmp/{{ nginx_version }}/"
+    dest: "/tmp/{{ lc.nginx_version }}/"
     remote_src: yes
   register: cache_purge
 
 - name: Get range cache plugin
   git:
     repo: https://github.com/multiplay/nginx-range-cache/
-    dest: "/tmp/{{ nginx_version }}/nginx-range-cache"
+    dest: "/tmp/{{ lc.nginx_version }}/nginx-range-cache"
     force: yes
   register: range_cache
 
 - name: Get Nginx push stream module
   git:
     repo: https://github.com/wandenberg/nginx-push-stream-module.git
-    dest: "/tmp/{{ nginx_version }}/nginx-push-stream-module"
+    dest: "/tmp/{{ lc.nginx_version }}/nginx-push-stream-module"
     force: yes
   register: push_stream
 
 - name: Patch Nginx files
   shell: "patch -p1 < nginx-range-cache/range_filter.patch"
   args:
-    chdir: "/tmp/{{ nginx_version }}"
+    chdir: "/tmp/{{ lc.nginx_version }}"
   when: nginx.changed or cache_purge.changed or range_cache.changed or push_stream.changed
   register: patched
 
 - name: Run ./configure for Nginx
-  shell: "./configure --with-http_slice_module --with-http_ssl_module --with-http_stub_status_module --with-pcre-jit --with-http_v2_module --with-stream=dynamic --with-stream_ssl_module --with-stream_ssl_preread_module  --add-module=ngx_cache_purge-{{ cache_purge_version }} --add-module=nginx-range-cache --with-http_realip_module --with-http_gzip_static_module --with-http_geoip_module=dynamic --with-file-aio --with-threads --with-ld-opt='-Wl,-z,relro,-L /usr/local/lib' --with-cc-opt='-m64 -march=native -g -O3 -fstack-protector-strong --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations' --sbin-path=/usr/sbin/nginx --pid-path=/run/nginx.pid --conf-path=/etc/nginx/nginx.conf --error-log-path=/srv/lancache/logs/nginx/error.log --http-log-path=/srv/lancache/logs/nginx/access.log"
+  shell: "./configure --with-http_slice_module --with-http_ssl_module --with-http_stub_status_module --with-pcre-jit --with-http_v2_module --with-stream=dynamic --with-stream_ssl_module --with-stream_ssl_preread_module  --add-module=ngx_cache_purge-{{ lc.cache_purge_version }} --add-module=nginx-range-cache --with-http_realip_module --with-http_gzip_static_module --with-http_geoip_module=dynamic --with-file-aio --with-threads --with-ld-opt='-Wl,-z,relro,-L /usr/local/lib' --with-cc-opt='-m64 -march=native -g -O3 -fstack-protector-strong --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations' --sbin-path=/usr/sbin/nginx --pid-path=/run/nginx.pid --conf-path=/etc/nginx/nginx.conf --error-log-path=/srv/lancache/logs/nginx/error.log --http-log-path=/srv/lancache/logs/nginx/access.log"
   args:
-    chdir: "/tmp/{{ nginx_version }}"
+    chdir: "/tmp/{{ lc.nginx_version }}"
   when: patched.changed
   register: configured
 
 - name: Run make for Nginx
   shell: "make"
   args:
-    chdir: "/tmp/{{ nginx_version }}"
+    chdir: "/tmp/{{ lc.nginx_version }}"
   when: configured.changed
 
 - name: Run make install for Nginx
   shell: "make install"
   args:
-    chdir: "/tmp/{{ nginx_version }}"
+    chdir: "/tmp/{{ lc.nginx_version }}"
   when: configured.changed
 
 - name: Copy systemd service file
@@ -78,6 +78,8 @@
     owner: root
     group: root
     mode: 0664
+  notify:
+    - Restart nginx
 
 - name: Enable nginx service
   systemd:

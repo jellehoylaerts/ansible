@@ -1,0 +1,81 @@
+---
+- name: Install HAProxy
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - haproxy18u
+    - keepalived
+
+- name: Template /etc/haproxy/haproxy.cfg
+  template:
+    src: haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
+    owner: haproxy
+    group: haproxy
+    mode: 0664
+  notify:
+    - Restart haproxy
+
+- name: Add HTTP and HTTPS to firewalld
+  firewalld:
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  with_items:
+    - http
+    - https
+
+- name: Start and enable HAProxy
+  systemd:
+    name: haproxy
+    state: started
+    enabled: true
+
+- name: chk_service script
+  template: 
+    src: check_script.sh
+    dest: /etc/keepalived/check_script.sh
+    mode: 0774
+    owner: root
+    group: root
+  notify:
+    - Restart keepalived
+
+- name: Template /etc/keepalived/keepalived.conf
+  template:
+    src: keepalived.conf
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: 0664
+  notify:
+    - Restart keepalived
+
+- name: Add VRRP to firewalld
+  firewalld:
+    port: 122/tcp
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: Add VRRP to firewalld
+  firewalld:
+    source: 224.0.0.18
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: Add VRRP to firewalld
+  firewalld:
+    rich_rule: 'rule protocol value="vrrp" accept'
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: Start and enable keepalived
+  systemd:
+    name: keepalived
+    state: started
+    enabled: true

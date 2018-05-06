@@ -2,15 +2,15 @@
 - name: Add all required ip's to the main interface
   nmcli:
     type: ethernet
-    conn_name: "{{ main_interface }}"
-    ip4: "{{ lc_ip }}/16,{{ lc_ip_steam }}/16,{{ lc_ip_riot }}/16,{{ lc_ip_blizzard }}/16,{{ lc_ip_hirez }}/16,{{ lc_ip_origin }}/16,{{ lc_ip_sony }}/16,{{ lc_ip_microsoft }}/16,{{ lc_ip_enmasse }}/16,{{ lc_ip_gog }}/16,{{ lc_ip_arena }}/16,{{ lc_ip_wargaming }}/16,{{ lc_ip_uplay }}/16,{{ lc_ip_apple }}/16,{{ lc_ip_glyph }}/16,{{ lc_ip_zenimax }}/16,{{ lc_ip_digitalextremes }}/16,{{ lc_ip_pearlabyss }}/16"
-    gw4: "{{ ip_gw }}"
+    conn_name: "{{ lc.interface }}"
+    ip4: "{{ lc.ip }}/16,{{ lc.ip_steam }}/16,{{ lc.ip_riot }}/16,{{ lc.ip_blizzard }}/16,{{ lc.ip_hirez }}/16,{{ lc.ip_origin }}/16,{{ lc.ip_sony }}/16,{{ lc.ip_microsoft }}/16,{{ lc.ip_enmasse }}/16,{{ lc.ip_gog }}/16,{{ lc.ip_arena }}/16,{{ lc.ip_wargaming }}/16,{{ lc.ip_uplay }}/16,{{ lc.ip_apple }}/16,{{ lc.ip_glyph }}/16,{{ lc.ip_zenimax }}/16,{{ lc.ip_digitalextremes }}/16,{{ lc.ip_pearlabyss }}/16"
+    gw4: "{{ lc.gw }}"
     dns4: "8.8.8.8,8.8.4.4"
     dns4_search: "lan"
     state: present		
 
 - name: Disable edit default
-  command: "nmcli con mod {{ main_interface }} ipv4.never-default no"
+  command: "nmcli con mod {{ lc.interface }} ipv4.never-default no"
 
 - name: Restart the interface
-  command: "nmcli con up {{ main_interface }}"
+  command: "nmcli con up {{ lc.interface }}"

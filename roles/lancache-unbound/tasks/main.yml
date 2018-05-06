@@ -1,0 +1,28 @@
+---
+- name: Install unbound
+  yum:
+    name: unbound
+    state: latest
+
+- name: Copy unbound.conf template
+  template:
+    src: unbound.conf
+    dest: /etc/unbound/unbound.conf
+    owner: root
+    group: root
+    mode: 0664
+  notify:
+    - Restart unbound
+
+- name: Add port tcp 53 to firewalld
+  firewalld:
+    port: 53/tcp
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: Start and enable unbound
+  systemd:
+    name: unbound
+    state: started
+    enabled: true
