@@ -1,0 +1,8 @@
+---
+backend_servers:
+  - name: nginx1
+    ip: 172.16.0.200
+  - name: nginx2
+    ip: 172.16.0.201
+  - name: nginx3
+    ip: 172.16.0.202

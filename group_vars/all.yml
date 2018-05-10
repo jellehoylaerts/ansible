@@ -37,11 +37,7 @@ keepalived:
   priority: 100
   backup_priority: 50
 
-harp:
+haproxy:
   interface: enp0s3
 
   router_id: 51
-
-  vip: 172.16.0.250
-  nginx1_ip: 172.16.0.48
-  nginx2_ip: 172.16.0.49

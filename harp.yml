@@ -1,16 +1,38 @@
 ---
 - name: Configure HAProxy to Reverse Proxy
   hosts: harp1
-  
+  vars:
+    backend_servers:
+    - name: nginx1
+      ip: 172.16.0.201
+    - name: nginx2
+      ip: 172.16.0.202
+    - name: nginx3
+      ip: 172.16.0.203
+    keepalived_role: "MASTER"  
+    router_id: 51
+    vip: 172.16.0.200
+
   roles:
 #    - base
 #    - ius
-    - { role: haproxy-reverse-proxy, keepalived_role: "MASTER" }
+    - haproxy
 
 - name: Configure HAProxy to Reverse Proxy
   hosts: harp2
-  
+  vars:
+    backend_servers:
+    - name: nginx1
+      ip: 172.16.0.201
+    - name: nginx2
+      ip: 172.16.0.202
+    - name: nginx3
+      ip: 172.16.0.203
+    keepalived_role: "BACKUP"  
+    router_id: 51
+    vip: 172.16.0.200
+
   roles:
 #    - base
 #    - ius
-    - { role: haproxy-reverse-proxy, keepalived_role: "BACKUP" }
+    - haproxy
