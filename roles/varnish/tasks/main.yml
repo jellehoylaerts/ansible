@@ -11,3 +11,35 @@
   yum:
     name: varnish
     state: latest
+
+- name: Copy Varnish configuration
+  template:
+    src: varnish.params.j2
+    dest: "/etc/varnish/varnish.params"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy Varnish default VCL
+  template:
+    src: "default.vcl.j2"
+    dest: "/etc/varnish/default.vcl"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart varnish
+
+- name: Copy varnish secret
+  template:
+    src: secret.j2
+    dest: "/etc/varnish/secret"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart varnish
+
+- name: Ensure Varnish services are started and enabled on startup.
+  systemd:
+    name: varnish
+    state: started
+    enabled: yes

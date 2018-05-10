@@ -14,8 +14,8 @@
     vip: 172.16.0.200
 
   roles:
-#    - base
-#    - ius
+    - base
+    - ius
     - haproxy
 
 - name: Configure HAProxy to Reverse Proxy
@@ -33,6 +33,6 @@
     vip: 172.16.0.200
 
   roles:
-#    - base
-#    - ius
+    - base
+    - ius
     - haproxy
