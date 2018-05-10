@@ -1,0 +1,13 @@
+---
+- name: Add Varnish repo
+  copy:
+    src: varnish60.repo
+    dest: /etc/yum.repos.d/varnish60.repo
+    owner: root
+    group: root
+    mode: 0664
+
+- name: Install Varnish
+  yum:
+    name: varnish
+    state: latest
