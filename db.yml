@@ -1,0 +1,6 @@
+---
+- name: Install Mariadb Galera cluster
+  hosts: db
+
+  roles:
+    - db
