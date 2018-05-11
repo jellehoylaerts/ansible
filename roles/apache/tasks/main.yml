@@ -1,0 +1,124 @@
+---
+- name: Install httpd
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - httpd
+    - httpd-devel
+    - mod_ssl
+
+- name: Make sure ssl directories exist
+  file:
+    name: "{{ item }}"
+    state: directory
+  with_items:
+    - /etc/ssl/private
+    - /etc/ssl/certs
+
+- name: Generate a Self Signed OpenSSL certificate
+  shell: "openssl req -x509 -nodes -days 365 -newkey rsa:4096 -subj '/C=BE/ST=Vlaams-Brabant/L=Kortenaken/O=SugarLAN/CN=apache.lan' -keyout /etc/ssl/private/apache.key -out /etc/ssl/certs/apache.crt"
+
+- name: Configure Apache.
+  lineinfile:
+    dest: /etc/httpd/conf/httpd.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - regexp: "^Listen "
+      line: "Listen 8080"
+  notify: restart apache
+
+- name: Add apache vhosts configuration.
+  template:
+    src: vhosts.conf.j2
+    dest: /etc/httpd/conf.d/000-default.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+
+- name: Start and enable httpd
+  systemd:
+    name: httpd
+    state: started
+    enabled: true
+
+- name: Open firewall ports
+  firewalld:
+    service: "{{ item }}"
+    immediate: true
+    permanent: true
+    state: enabled
+  with_items:
+    - http
+    - https
+
+- name: Install php
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - php72u
+    - php72u-pdo
+    - php72u-cli
+    - php72u-fpm-httpd
+    - php72u-fpm
+    - php72u-xml
+    - php72u-json
+    - php72u-mbstring
+  notify: restart apache
+
+- name: Place PHP configuration file in place
+  template:
+    src: php.ini.j2
+    dest: /etc/php.ini
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+
+- name: Ensure the default pool exists
+  template:
+    src: www.conf.j2
+    dest: /etc/php-fpm.d/www.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+
+- name: Configure php-fpm pool
+  lineinfile:
+    dest: /etc/php-fpm.d/www.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - regexp: "^listen.?=.+$"
+      line: "listen = {{ php_fpm_listen }}"
+    - regexp: '^listen\.allowed_clients.?=.+$'
+      line: "listen.allowed_clients = {{ php_fpm_listen_allowed_clients }}"
+    - regexp: '^pm\.max_children.?=.+$'
+      line: "pm.max_children = {{ php_fpm_pm_max_children }}"
+    - regexp: '^pm\.start_servers.?=.+$'
+      line: "pm.start_servers = {{ php_fpm_pm_start_servers }}"
+    - regexp: '^pm\.min_spare_servers.?=.+$'
+      line: "pm.min_spare_servers = {{ php_fpm_pm_min_spare_servers }}"
+    - regexp: '^pm\.max_spare_servers.?=.+$'
+      line: "pm.max_spare_servers = {{ php_fpm_pm_max_spare_servers }}"
+  notify: restart php-fpm
+
+- name: Configure apache to use php-fpm
+  lineinfile:
+    dest: /etc/httpd/conf.d/php.conf
+    regexp: '[^\S\n\t]+SetHandler application/x-httpd-php$'
+    line: 'SetHandler "proxy:fcgi://127.0.0.1:9000"'
+    state: present
+  notify: restart apache
+
+- name: Ensure php-fpm is started and enabled
+  service:
+    name: "php-fpm"
+    state: started
+    enabled: yes

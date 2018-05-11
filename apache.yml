@@ -1,0 +1,8 @@
+---
+- name: Install apache
+  hosts: apache
+  
+  roles:
+    - base
+    - ius
+    - apache

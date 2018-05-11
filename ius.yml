@@ -1,6 +1,0 @@
----
-- name: Configure IUS
-  hosts: all
-
-  roles:
-    - ius
