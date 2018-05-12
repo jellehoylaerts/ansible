@@ -1,4 +1,13 @@
 ---
+auth_pass: lanparty
+
+priority: 100
+backup_priority: 50
+
+interface: enp0s3
+
+router_id: 51
+
 backend_servers:
   - name: nginx1
     ip: 172.16.0.200

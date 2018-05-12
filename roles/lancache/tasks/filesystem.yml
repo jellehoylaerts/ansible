@@ -2,7 +2,7 @@
 - name: Create vg for the LANcache
   lvg:
     vg: lancache
-    pvs: "{{ lc.devices }}"
+    pvs: "{{ devices }}"
 
 - name: Create lv for the LANcache
   lvol:

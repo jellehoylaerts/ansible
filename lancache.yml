@@ -6,4 +6,4 @@
     - base
     - lancache
     - netdata
-    - lancache-unbound
+    - unbound

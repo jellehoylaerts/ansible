@@ -63,11 +63,11 @@
   lineinfile:
     dest: /etc/sysctl.conf
     regexp: '^net\.core\.somaxconn'
-    line: "net.core.somaxconn={{ lc.somaxconn }}"
+    line: "net.core.somaxconn={{ somaxconn }}"
   register: sys_somaxconn
 
 - name: Increase queue listen size now
-  command: sysctl -w net.core.somaxconn={{ lc.somaxconn }}
+  command: sysctl -w net.core.somaxconn={{ somaxconn }}
   when: sys_somaxconn.changed
 
 - name: Find max open files
@@ -97,7 +97,7 @@
 - name: Increase security limits
   template:
     src: "lancache_limits.conf"
-    dest: "/etc/security/limits.d/lancache_limits.conf"
+    dest: "/etc/security/limits.d/limits.conf"
     owner: root
     group: root
     mode: 0644
