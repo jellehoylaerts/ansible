@@ -6,7 +6,7 @@ somaxconn: 16384
 devices: /dev/sdb,/dev/sdc
 base_folder: /tmp/lancache
 
-interface: enp0s3
+interface: enp2s0f0
 gw: 172.16.0.1
 ip: 172.16.0.181
 

@@ -96,7 +96,7 @@
 
 - name: Increase security limits
   template:
-    src: "lancache_limits.conf"
+    src: "limits.conf"
     dest: "/etc/security/limits.d/limits.conf"
     owner: root
     group: root

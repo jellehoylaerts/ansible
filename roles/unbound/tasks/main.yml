@@ -14,9 +14,9 @@
   notify:
     - Restart unbound
 
-- name: Add port tcp 53 to firewalld
+- name: Add dns to firewalld
   firewalld:
-    port: 53/tcp
+    service: dns
     permanent: true
     immediate: true
     state: enabled

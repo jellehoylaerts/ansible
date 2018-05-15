@@ -49,25 +49,25 @@
     regexp: "{{ item.search }}"
     replace: "{{ item.replace }}"
   loop:
-    - { search: 'hostname', replace: '{{ inventory_hostname }}' }
-    - { search: 'host-proxybind', replace: '{{ ip }}' }
-    - { search: 'host-arena', replace: '{{ ip_arena }}' }
-    - { search: 'host-apple', replace: '{{ ip_apple }}' }
-    - { search: 'host-blizzard', replace: '{{ ip_blizzard }}' }
-    - { search: 'host-hirez', replace: '{{ ip_hirez }}' }
-    - { search: 'host-glyph', replace: '{{ ip_glyph }}' }
-    - { search: 'host-gog', replace: '{{ ip_gog }}' }
-    - { search: 'host-microsoft', replace: '{{ ip_microsoft }}' }
-    - { search: 'host-origin', replace: '{{ ip_origin }}' }
-    - { search: 'host-riot', replace: '{{ ip_riot }}' }
-    - { search: 'host-steam', replace: '{{ ip_steam }}' }
-    - { search: 'host-sony', replace: '{{ ip_sony }}' }
-    - { search: 'host-enmasse', replace: '{{ ip_enmasse }}' }
-    - { search: 'host-uplay', replace: '{{ ip_uplay }}' }
-    - { search: 'host-wargaming', replace: '{{ ip_wargaming }}' }
-    - { search: 'host-zenimax', replace: '{{ ip_zenimax }}' }
-    - { search: 'host-digitalextremes', replace: '{{ ip_digitalextremes }}' }
-    - { search: 'host-pearlabyss', replace: '{{ ip_pearlabyss }}' }
+    - { search: 'lc-hostname', replace: '{{ inventory_hostname }}' }
+    - { search: 'lc-host-proxybind', replace: '{{ ip }}' }
+    - { search: 'lc-host-arena', replace: '{{ ip_arena }}' }
+    - { search: 'lc-host-apple', replace: '{{ ip_apple }}' }
+    - { search: 'lc-host-blizzard', replace: '{{ ip_blizzard }}' }
+    - { search: 'lc-host-hirez', replace: '{{ ip_hirez }}' }
+    - { search: 'lc-host-glyph', replace: '{{ ip_glyph }}' }
+    - { search: 'lc-host-gog', replace: '{{ ip_gog }}' }
+    - { search: 'lc-host-microsoft', replace: '{{ ip_microsoft }}' }
+    - { search: 'lc-host-origin', replace: '{{ ip_origin }}' }
+    - { search: 'lc-host-riot', replace: '{{ ip_riot }}' }
+    - { search: 'lc-host-steam', replace: '{{ ip_steam }}' }
+    - { search: 'lc-host-sony', replace: '{{ ip_sony }}' }
+    - { search: 'lc-host-enmasse', replace: '{{ ip_enmasse }}' }
+    - { search: 'lc-host-uplay', replace: '{{ ip_uplay }}' }
+    - { search: 'lc-host-wargaming', replace: '{{ ip_wargaming }}' }
+    - { search: 'lc-host-zenimax', replace: '{{ ip_zenimax }}' }
+    - { search: 'lc-host-digitalextremes', replace: '{{ ip_digitalextremes }}' }
+    - { search: 'lc-host-pearlabyss', replace: '{{ ip_pearlabyss }}' }
 
 - name: Copy hosts file to /etc/hosts
   copy:
@@ -82,17 +82,20 @@
   command: "cp -rf {{ base_folder }}/conf/lancache /etc/nginx/"
 
 - name: Copy LANcache vhosts
-  command: "cp -rf {{ base_folder }}/conf/vhosts-enabled /etc/nginx/"
+  command: "cp -rf {{ base_folder }}/conf/vhosts-enabled/ /etc/nginx/conf.d/"
 
 - name: Copy Nginx config file
   template:
     src: nginx.conf
     dest: /etc/nginx/nginx.conf
 
+- debug:
+    msg: "{{ ip }}"
+
 - name: Replace variables in vhost files
   replace:
-    path: "/etc/nginx/vhosts-enabled/lancache-{{ item }}.conf"
-    regexp: host-proxybind
+    path: "/etc/nginx/conf.d/lancache-{{ item }}.conf"
+    regexp: lc-host-proxybind
     replace: "{{ ip }}"
   loop:
     - apple
